@@ -1,0 +1,92 @@
+@import 'theme';
+
+// ── Light Mode: applied by default via :root ──────────────────────────────────
+:root {
+  // Background
+  --bg-color:           #{$light-bg};
+  --card-bg:            #{$light-card-bg};
+  --header-bg:          #{$light-header-bg};
+  --header-border:      #{$light-header-border};
+
+  // Text
+  --text-color:         #{$light-text};
+  --text-secondary:     #{$light-text-secondary};
+  --text-muted:         #{$light-text-muted};
+
+  // Primary
+  --primary-btn:        #{$light-primary};
+  --primary-btn-hover:  #{$light-primary-hover};
+  --primary-btn-text:   #{$light-primary-text};
+
+  // Nav buttons
+  --nav-btn-text:       #{$light-nav-text};
+  --nav-btn-border:     #{$light-nav-border};
+  --nav-btn-bg:         #{$light-nav-bg};
+  --nav-btn-hover-bg:   #{$light-nav-hover-bg};
+
+  // Toggle
+  --toggle-track:       #{$light-toggle-track};
+  --toggle-thumb:       #{$light-toggle-thumb};
+
+  // Borders
+  --border-color:       #{$light-border};
+
+  // Shadows
+  --shadow-sm:          #{$light-shadow-sm};
+  --shadow-md:          #{$light-shadow-md};
+  --shadow-lg:          #{$light-shadow-lg};
+
+  // Shared (mode-independent)
+  --font-family:        #{$font-family};
+  --transition-speed:   #{$transition-speed};
+  --transition-ease:    #{$transition-ease};
+  --content-max-width:  #{$content-max-width};
+}
+
+// ── Dark Mode: overrides when body.dark-mode is set by ThemeService ───────────
+body.dark-mode {
+  // Background
+  --bg-color:           #{$dark-bg};
+  --card-bg:            #{$dark-card-bg};
+  --header-bg:          #{$dark-header-bg};
+  --header-border:      #{$dark-header-border};
+
+  // Text
+  --text-color:         #{$dark-text};
+  --text-secondary:     #{$dark-text-secondary};
+  --text-muted:         #{$dark-text-muted};
+
+  // Primary
+  --primary-btn:        #{$dark-primary};
+  --primary-btn-hover:  #{$dark-primary-hover};
+  --primary-btn-text:   #{$dark-primary-text};
+
+  // Nav buttons
+  --nav-btn-text:       #{$dark-nav-text};
+  --nav-btn-border:     #{$dark-nav-border};
+  --nav-btn-bg:         #{$dark-nav-bg};
+  --nav-btn-hover-bg:   #{$dark-nav-hover-bg};
+
+  // Toggle
+  --toggle-track:       #{$dark-toggle-track};
+  --toggle-thumb:       #{$dark-toggle-thumb};
+
+  // Borders
+  --border-color:       #{$dark-border};
+
+  // Shadows
+  --shadow-sm:          #{$dark-shadow-sm};
+  --shadow-md:          #{$dark-shadow-md};
+  --shadow-lg:          #{$dark-shadow-lg};
+}
+
+// ── Global Theme Transition ───────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  transition:
+    background-color var(--transition-speed) var(--transition-ease),
+    border-color     var(--transition-speed) var(--transition-ease),
+    color            var(--transition-speed) var(--transition-ease),
+    box-shadow       var(--transition-speed) var(--transition-ease);
+}

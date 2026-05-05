@@ -1,0 +1,85 @@
+// ─── Design Token Palette ─────────────────────────────────────────────────────
+// _global.scss consumes these to write :root and body.dark-mode blocks.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Light Palette ─────────────────────────────────────────────────────────────
+
+// Background
+$light-bg:             #f0f4f8;
+$light-card-bg:        #ffffff;
+$light-header-bg:      #ffffff;
+$light-header-border:  rgba(0, 0, 0, 0.08);
+
+// Text
+$light-text:           #1e293b;
+$light-text-secondary: #64748b;
+$light-text-muted:     #94a3b8;
+
+// Primary
+$light-primary:        #2563eb;
+$light-primary-hover:  #1d4ed8;
+$light-primary-text:   #ffffff;
+
+// Nav buttons
+$light-nav-text:       #2563eb;
+$light-nav-border:     #2563eb;
+$light-nav-bg:         transparent;
+$light-nav-hover-bg:   rgba(37, 99, 235, 0.08);
+
+// Toggle
+$light-toggle-track:   #cbd5e1;
+$light-toggle-thumb:   #ffffff;
+
+// Borders
+$light-border:         #e2e8f0;
+
+// Shadows
+$light-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+$light-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+$light-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.04);
+
+
+// ── Dark Palette ──────────────────────────────────────────────────────────────
+
+// Background
+$dark-bg:             #0b0b14;
+$dark-card-bg:        #141824;
+$dark-header-bg:      #0e1120;
+$dark-header-border:  rgba(255, 255, 255, 0.06);
+
+// Text
+$dark-text:           #f1f5f9;
+$dark-text-secondary: #94a3b8;
+$dark-text-muted:     #64748b;
+
+// Primary
+$dark-primary:        #2563eb;
+$dark-primary-hover:  #3b82f6;
+$dark-primary-text:   #ffffff;
+
+// Nav buttons
+$dark-nav-text:       #f1f5f9;
+$dark-nav-border:     rgba(255, 255, 255, 0.25);
+$dark-nav-bg:         transparent;
+$dark-nav-hover-bg:   rgba(255, 255, 255, 0.06);
+
+// Toggle
+$dark-toggle-track:   #334155;
+$dark-toggle-thumb:   #ffffff;
+
+// Borders
+$dark-border:         rgba(255, 255, 255, 0.08);
+
+// Shadows
+$dark-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+$dark-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.30);
+$dark-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.50), 0 4px 6px rgba(0, 0, 0, 0.35);
+
+
+// ── Shared (mode-independent) ─────────────────────────────────────────────────
+
+$font-family:       'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+$transition-speed:  0.25s;
+$transition-ease:   cubic-bezier(0.4, 0, 0.2, 1);
+$content-max-width: 1280px;
+

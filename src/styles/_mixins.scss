@@ -1,0 +1,38 @@
+// ─── Responsive Breakpoint Mixins ─────────────────────────────────────────────
+//
+// Usage:
+//   .my-element {
+//     font-size: 1rem;          // base (mobile-first default)
+//
+//     @include tablet  { font-size: 1.125rem; }
+//     @include desktop { font-size: 1.25rem;  }
+//   }
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Mobile: up to and including 768px
+@mixin mobile {
+  @media screen and (max-width: 768px) {
+    @content;
+  }
+}
+
+/// Tablet: 769px – 1024px 
+@mixin tablet {
+  @media screen and (min-width: 769px) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+/// Desktop: 1025px and wider (spacious, expanded layout)
+@mixin desktop {
+  @media screen and (min-width: 1025px) {
+    @content;
+  }
+}
+
+/// Large Desktop: 1440px and wider (optional extra breakpoint)
+@mixin large-desktop {
+  @media screen and (min-width: 1440px) {
+    @content;
+  }
+}
