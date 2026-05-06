@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-currency-history',
   templateUrl: './currency-history.component.html',
-  styleUrls: ['./currency-history.component.scss']
+  styleUrls: ['./currency-history.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CurrencyHistoryComponent implements OnInit {
 

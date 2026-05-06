@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-    selector: 'app-icon-swap',
-    template: `
+  selector: 'app-icon-swap',
+  template: `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M7 16V4m0 0L3 8m4-4 4 4"/>
       <path d="M17 8v12m0 0 4-4m-4 4-4-4"/>
     </svg>
   `,
-    styles: [`:host { display: inline-flex; } :host svg { width: 100%; height: 100%; }`]
+  styles: [`:host { display: inline-flex; } :host svg { width: 100%; height: 100%; }`],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SwapIconComponent { }

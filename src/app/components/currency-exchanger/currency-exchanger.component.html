@@ -1,13 +1,17 @@
 <section class="currency-exchanger">
   <h2 class="section-title">Currency Exchanger</h2>
 
-  <div class="exchanger-card">
-    <form [formGroup]="exchangeForm" class="exchanger-form" novalidate>
+  <div class="exchanger-card" [class.is-loading]="isLoading$ | async">
 
-      <!-- ── Input Row ──────────────────────────────────────────── -->
+    <div class="loading-overlay" *ngIf="isLoading$ | async" aria-label="Loading exchange rates">
+      <span class="spinner"></span>
+      <span class="loading-text">Loading exchange rates&hellip;</span>
+    </div>
+
+    <form [formGroup]="exchangeForm" class="exchanger-form" novalidate (ngSubmit)="onConvert()">
+
       <div class="form-row">
 
-        <!-- Amount -->
         <div class="form-field amount-field">
           <label class="field-label" for="ce-amount">Amount</label>
           <div class="amount-wrapper" [class.is-invalid]="amountControl?.invalid && amountControl?.touched">
@@ -23,7 +27,6 @@
           </div>
         </div>
 
-        <!-- From Currency -->
         <div class="form-field currency-field">
           <label class="field-label">From</label>
           <div class="currency-selector">
@@ -36,21 +39,19 @@
             <app-icon-chevron class="chevron"></app-icon-chevron>
             <select formControlName="fromCurrency" class="select-overlay" aria-label="Select source currency">
               <option *ngFor="let c of currencies" [value]="c.code">
-                {{ c.code }} – {{ c.name }}
+                {{ c.code }} &ndash; {{ c.name }}
               </option>
             </select>
           </div>
           <div class="error-area"></div>
         </div>
 
-        <!-- Swap Button -->
         <div class="swap-col">
-          <button type="button" class="swap-btn" aria-label="Swap currencies">
+          <button type="button" class="swap-btn" aria-label="Swap currencies" (click)="swapCurrencies()">
             <app-icon-swap></app-icon-swap>
           </button>
         </div>
 
-        <!-- To Currency -->
         <div class="form-field currency-field">
           <label class="field-label">To</label>
           <div class="currency-selector">
@@ -62,7 +63,7 @@
             </div>
             <app-icon-chevron class="chevron"></app-icon-chevron>
             <select formControlName="toCurrency" class="select-overlay" aria-label="Select target currency">
-              <option *ngFor="let c of currencies" [value]="c.code">{{ c.code }} – {{ c.name }}</option>
+              <option *ngFor="let c of currencies" [value]="c.code">{{ c.code }} &ndash; {{ c.name }}</option>
             </select>
           </div>
           <div class="error-area"></div>
@@ -70,20 +71,19 @@
 
       </div>
 
-      <!-- ── Convert Button ──────────────────────────────────────── -->
-      <button type="submit" class="convert-btn" [disabled]="exchangeForm.invalid">Convert</button>
+      <button type="submit" class="convert-btn"
+        [disabled]="exchangeForm.invalid || (isLoading$ | async)">Convert</button>
 
     </form>
 
-    <!-- ── Results Row ─────────────────────────────────────────────── -->
-    <div class="results-row">
+    <div class="results-row" *ngIf="convertedAmount !== null">
       <div class="rate-tag">
         <app-icon-trend class="trend-icon"></app-icon-trend>
-        <span>1.00 EUR = 1.08 USD</span>
+        <span>{{ displayRate }}</span>
       </div>
 
       <div class="converted-block">
-        <span class="converted-amount">27.00 USD</span>
+        <span class="converted-amount">{{ convertedAmount | number:'1.2-4' }} {{ toCurrency.code }}</span>
         <span class="converted-label">Converted Amount</span>
       </div>
 

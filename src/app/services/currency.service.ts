@@ -1,194 +1,89 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Currency } from '../models/currency';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subject, forkJoin, of, timer } from 'rxjs';
+import { catchError, finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Currency, CurrencyCode, ConversionState, SymbolsResponse, RatesResponse } from '../models/currency';
+import { environment } from '../../environments/environment';
+import { MOCK_RATES_RESPONSE } from '../mock-data/mock-rates';
+import { MOCK_SYMBOLS_RESPONSE } from '../mock-data/mock-symbols';
 
-const MOCK_SYMBOLS: Record<string, string> = {
-    AED: 'United Arab Emirates Dirham',
-    AFN: 'Afghan Afghani',
-    ALL: 'Albanian Lek',
-    AMD: 'Armenian Dram',
-    ANG: 'Netherlands Antillean Guilder',
-    AOA: 'Angolan Kwanza',
-    ARS: 'Argentine Peso',
-    AUD: 'Australian Dollar',
-    AWG: 'Aruban Florin',
-    AZN: 'Azerbaijani Manat',
-    BAM: 'Bosnia-Herzegovina Convertible Mark',
-    BBD: 'Barbadian Dollar',
-    BDT: 'Bangladeshi Taka',
-    BGN: 'Bulgarian Lev',
-    BHD: 'Bahraini Dinar',
-    BIF: 'Burundian Franc',
-    BMD: 'Bermudan Dollar',
-    BND: 'Brunei Dollar',
-    BOB: 'Bolivian Boliviano',
-    BRL: 'Brazilian Real',
-    BSD: 'Bahamian Dollar',
-    BTC: 'Bitcoin',
-    BTN: 'Bhutanese Ngultrum',
-    BWP: 'Botswanan Pula',
-    BYN: 'New Belarusian Ruble',
-    BYR: 'Belarusian Ruble',
-    BZD: 'Belize Dollar',
-    CAD: 'Canadian Dollar',
-    CDF: 'Congolese Franc',
-    CHF: 'Swiss Franc',
-    CLF: 'Chilean Unit of Account (UF)',
-    CLP: 'Chilean Peso',
-    CNH: 'Chinese Yuan Offshore',
-    CNY: 'Chinese Yuan',
-    COP: 'Colombian Peso',
-    CRC: 'Costa Rican Colón',
-    CUC: 'Cuban Convertible Peso',
-    CUP: 'Cuban Peso',
-    CVE: 'Cape Verdean Escudo',
-    CZK: 'Czech Republic Koruna',
-    DJF: 'Djiboutian Franc',
-    DKK: 'Danish Krone',
-    DOP: 'Dominican Peso',
-    DZD: 'Algerian Dinar',
-    EGP: 'Egyptian Pound',
-    ERN: 'Eritrean Nakfa',
-    ETB: 'Ethiopian Birr',
-    EUR: 'Euro',
-    FJD: 'Fijian Dollar',
-    FKP: 'Falkland Islands Pound',
-    GBP: 'British Pound Sterling',
-    GEL: 'Georgian Lari',
-    GGP: 'Guernsey Pound',
-    GHS: 'Ghanaian Cedi',
-    GIP: 'Gibraltar Pound',
-    GMD: 'Gambian Dalasi',
-    GNF: 'Guinean Franc',
-    GTQ: 'Guatemalan Quetzal',
-    GYD: 'Guyanaese Dollar',
-    HKD: 'Hong Kong Dollar',
-    HNL: 'Honduran Lempira',
-    HRK: 'Croatian Kuna',
-    HTG: 'Haitian Gourde',
-    HUF: 'Hungarian Forint',
-    IDR: 'Indonesian Rupiah',
-    ILS: 'Israeli New Sheqel',
-    IMP: 'Manx Pound',
-    INR: 'Indian Rupee',
-    IQD: 'Iraqi Dinar',
-    IRR: 'Iranian Rial',
-    ISK: 'Icelandic Króna',
-    JEP: 'Jersey Pound',
-    JMD: 'Jamaican Dollar',
-    JOD: 'Jordanian Dinar',
-    JPY: 'Japanese Yen',
-    KES: 'Kenyan Shilling',
-    KGS: 'Kyrgystani Som',
-    KHR: 'Cambodian Riel',
-    KMF: 'Comorian Franc',
-    KPW: 'North Korean Won',
-    KRW: 'South Korean Won',
-    KWD: 'Kuwaiti Dinar',
-    KYD: 'Cayman Islands Dollar',
-    KZT: 'Kazakhstani Tenge',
-    LAK: 'Laotian Kip',
-    LBP: 'Lebanese Pound',
-    LKR: 'Sri Lankan Rupee',
-    LRD: 'Liberian Dollar',
-    LSL: 'Lesotho Loti',
-    LTL: 'Lithuanian Litas',
-    LVL: 'Latvian Lats',
-    LYD: 'Libyan Dinar',
-    MAD: 'Moroccan Dirham',
-    MDL: 'Moldovan Leu',
-    MGA: 'Malagasy Ariary',
-    MKD: 'Macedonian Denar',
-    MMK: 'Myanma Kyat',
-    MNT: 'Mongolian Tugrik',
-    MOP: 'Macanese Pataca',
-    MRU: 'Mauritanian Ouguiya',
-    MUR: 'Mauritian Rupee',
-    MVR: 'Maldivian Rufiyaa',
-    MWK: 'Malawian Kwacha',
-    MXN: 'Mexican Peso',
-    MYR: 'Malaysian Ringgit',
-    MZN: 'Mozambican Metical',
-    NAD: 'Namibian Dollar',
-    NGN: 'Nigerian Naira',
-    NIO: 'Nicaraguan Córdoba',
-    NOK: 'Norwegian Krone',
-    NPR: 'Nepalese Rupee',
-    NZD: 'New Zealand Dollar',
-    OMR: 'Omani Rial',
-    PAB: 'Panamanian Balboa',
-    PEN: 'Peruvian Nuevo Sol',
-    PGK: 'Papua New Guinean Kina',
-    PHP: 'Philippine Peso',
-    PKR: 'Pakistani Rupee',
-    PLN: 'Polish Zloty',
-    PYG: 'Paraguayan Guarani',
-    QAR: 'Qatari Rial',
-    RON: 'Romanian Leu',
-    RSD: 'Serbian Dinar',
-    RUB: 'Russian Ruble',
-    RWF: 'Rwandan Franc',
-    SAR: 'Saudi Riyal',
-    SBD: 'Solomon Islands Dollar',
-    SCR: 'Seychellois Rupee',
-    SDG: 'South Sudanese Pound',
-    SEK: 'Swedish Krona',
-    SGD: 'Singapore Dollar',
-    SHP: 'Saint Helena Pound',
-    SLE: 'Sierra Leonean Leone',
-    SLL: 'Sierra Leonean Leone',
-    SOS: 'Somali Shilling',
-    SRD: 'Surinamese Dollar',
-    STD: 'São Tomé and Príncipe Dobra',
-    STN: 'São Tomé and Príncipe Dobra',
-    SVC: 'Salvadoran Colón',
-    SYP: 'Syrian Pound',
-    SZL: 'Swazi Lilangeni',
-    THB: 'Thai Baht',
-    TJS: 'Tajikistani Somoni',
-    TMT: 'Turkmenistani Manat',
-    TND: 'Tunisian Dinar',
-    TOP: "Tongan Pa'anga",
-    TRY: 'Turkish Lira',
-    TTD: 'Trinidad and Tobago Dollar',
-    TWD: 'New Taiwan Dollar',
-    TZS: 'Tanzanian Shilling',
-    UAH: 'Ukrainian Hryvnia',
-    UGX: 'Ugandan Shilling',
-    USD: 'United States Dollar',
-    UYU: 'Uruguayan Peso',
-    UZS: 'Uzbekistan Som',
-    VES: 'Sovereign Bolivar',
-    VND: 'Vietnamese Dong',
-    VUV: 'Vanuatu Vatu',
-    WST: 'Samoan Tala',
-    XAF: 'CFA Franc BEAC',
-    XAG: 'Silver (troy ounce)',
-    XAU: 'Gold (troy ounce)',
-    XCD: 'East Caribbean Dollar',
-    XCG: 'Caribbean Guilder',
-    XDR: 'Special Drawing Rights',
-    XOF: 'CFA Franc BCEAO',
-    XPF: 'CFP Franc',
-    YER: 'Yemeni Rial',
-    ZAR: 'South African Rand',
-    ZMK: 'Zambian Kwacha (pre-2013)',
-    ZMW: 'Zambian Kwacha',
-    ZWL: 'Zimbabwean Dollar',
-};
+const API_BASE = 'https://data.fixer.io/api';
+const POLL_INTERVAL_MS = 3_600_000; // 1 hour
 
 @Injectable({ providedIn: 'root' })
-export class CurrencyService {
-    /**
-     * Returns the list of available currencies.
-     * TODO: replace with an HttpClient GET call to the real symbols endpoint.
-     */
-    getSymbols(): Observable<Currency[]> {
-        const currencies: Currency[] = Object.entries(MOCK_SYMBOLS).map(([code, name]) => ({
-            code,
-            name,
-            countryCode: code.slice(0, 2).toLowerCase(),
-        }));
-        return of(currencies);
+export class CurrencyService implements OnDestroy {
+    private symbolsSubject = new BehaviorSubject<Currency[]>([]);
+    private ratesSubject = new BehaviorSubject<Record<CurrencyCode, number>>({} as Record<CurrencyCode, number>);
+    private loadingSubject = new BehaviorSubject<boolean>(false);
+    private conversionStateSubject = new BehaviorSubject<ConversionState>({ amount: 1, fromCurrency: 'EUR' });
+    private destroy$ = new Subject<void>();
+
+    symbols$ = this.symbolsSubject.asObservable();
+    rates$ = this.ratesSubject.asObservable();
+    isLoading$ = this.loadingSubject.asObservable();
+    conversionState$ = this.conversionStateSubject.asObservable();
+
+    constructor(private http: HttpClient) { }
+
+    startPolling(): void {
+        this.loadingSubject.next(true);
+
+        timer(0, POLL_INTERVAL_MS).pipe(
+            switchMap(() => this.fetchData$().pipe(
+                tap(({ symbols: symbolsRes, latest }) => {
+                    const currencies: Currency[] = Object.entries(symbolsRes.symbols).map(([code, name]) => ({
+                        code,
+                        name,
+                        countryCode: code.slice(0, 2).toLowerCase(),
+                    }));
+                    this.symbolsSubject.next(currencies);
+                    this.ratesSubject.next(latest.rates);
+                }),
+                catchError((error) => {
+                    console.error('Failed to load currency data', error);
+                    this.symbolsSubject.next([]);
+                    this.ratesSubject.next({} as Record<CurrencyCode, number>);
+                    return of(undefined);
+                }),
+                finalize(() => this.loadingSubject.next(false)),
+            )),
+            takeUntil(this.destroy$),
+        ).subscribe();
+    }
+
+    private fetchData$() {
+        // added mockdata to avoid reaching fixer api free limit
+        return environment.useMockData
+            ? of({ symbols: MOCK_SYMBOLS_RESPONSE as SymbolsResponse, latest: MOCK_RATES_RESPONSE as RatesResponse })
+            : forkJoin({
+                symbols: this.http.get<SymbolsResponse>(
+                    `${API_BASE}/symbols?access_key=${environment.apiKey}`
+                ),
+                latest: this.http.get<RatesResponse>(
+                    `${API_BASE}/latest?access_key=${environment.apiKey}`
+                ),
+            });
+    }
+
+    setConversionState(amount: number, fromCurrency: CurrencyCode): void {
+        this.conversionStateSubject.next({ amount, fromCurrency });
+    }
+
+    convert(amount: number, from: string, to: string): number {
+        if (from === to) return amount;
+        const rates = this.ratesSubject.getValue();
+        const fromRate = rates[from as CurrencyCode] ?? 1;
+        const toRate = rates[to as CurrencyCode] ?? 1;
+        const amountInEur = amount / fromRate;
+        return amountInEur * toRate;
+    }
+
+    getRates(): Record<CurrencyCode, number> {
+        return this.ratesSubject.getValue();
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 }

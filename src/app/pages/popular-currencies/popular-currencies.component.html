@@ -1,15 +1,35 @@
 <section class="popular-currencies">
-  <h2 class="section-title">Popular Currency Conversions</h2>
+  <h2 class="section-title">
+    {{ dataLoaded ? 'Popular Currency Conversions' : 'Popular Currencies' }}
+  </h2>
 
-  <div class="currency-grid">
-    <div class="currency-card">USD &mdash; US Dollar</div>
-    <div class="currency-card">GBP &mdash; British Pound</div>
-    <div class="currency-card">JPY &mdash; Japanese Yen</div>
-    <div class="currency-card">CAD &mdash; Canadian Dollar</div>
-    <div class="currency-card">AUD &mdash; Australian Dollar</div>
-    <div class="currency-card">CHF &mdash; Swiss Franc</div>
-    <div class="currency-card">CNY &mdash; Chinese Yuan</div>
-    <div class="currency-card">INR &mdash; Indian Rupee</div>
-    <div class="currency-card">SGD &mdash; Singapore Dollar</div>
+  <div class="currency-grid" *ngIf="isLoading">
+    <div class="currency-card currency-card--skeleton" *ngFor="let i of [1,2,3,4,5,6,7,8,9]">
+      <div class="skeleton-flag"></div>
+      <div class="skeleton-lines">
+        <div class="skeleton-line skeleton-line--code"></div>
+        <div class="skeleton-line skeleton-line--name"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="currency-grid" *ngIf="!isLoading">
+    <div class="currency-card" *ngFor="let card of cards">
+      <span
+        class="fi fi-{{ card.countryCode }} fis flag flag--card"
+        role="img"
+        [attr.aria-label]="card.name + ' flag'"
+      ></span>
+
+      <div class="card-info">
+        <span class="card-code">{{ card.code }}</span>
+        <span class="card-name">{{ card.name }}</span>
+      </div>
+
+      <div class="card-amount" *ngIf="dataLoaded && card.convertedAmount !== null">
+        {{ card.convertedAmount | number:'1.2-4' }}
+        <span class="card-amount-code">{{ card.code }}</span>
+      </div>
+    </div>
   </div>
 </section>
