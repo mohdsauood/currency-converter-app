@@ -1,10 +1,94 @@
-<div class="currency-exchanger">
+<section class="currency-exchanger">
+  <h2 class="section-title">Currency Exchanger</h2>
 
+  <div class="exchanger-card">
+    <form [formGroup]="exchangeForm" class="exchanger-form" novalidate>
 
-  <h2 class="placeholder-title"> Currency Exchanger</h2>
-  <p class="placeholder-hint">Converter form will be implemented here.
+      <!-- ── Input Row ──────────────────────────────────────────── -->
+      <div class="form-row">
 
+        <!-- Amount -->
+        <div class="form-field amount-field">
+          <label class="field-label" for="ce-amount">Amount</label>
+          <div class="amount-wrapper" [class.is-invalid]="amountControl?.invalid && amountControl?.touched">
+            <input id="ce-amount" type="number" formControlName="amount" class="amount-input" placeholder="0"
+              min="0.01" />
+            <span class="amount-badge">{{ fromCurrency.code }}</span>
+          </div>
+          <div class="error-area" aria-live="polite">
+            <ng-container *ngIf="amountControl?.invalid && amountControl?.touched">
+              <span *ngIf="amountControl?.errors?.['required']" class="error-msg">Amount is required.</span>
+              <span *ngIf="amountControl?.errors?.['min']" class="error-msg">Amount must be a positive number.</span>
+            </ng-container>
+          </div>
+        </div>
 
+        <!-- From Currency -->
+        <div class="form-field currency-field">
+          <label class="field-label">From</label>
+          <div class="currency-selector">
+            <span class="fi fi-{{ fromCurrency.countryCode }} fis flag flag--sq" role="img"
+              [attr.aria-label]="fromCurrency.name + ' flag'"></span>
+            <div class="curr-info">
+              <span class="curr-code">{{ fromCurrency.code }}</span>
+              <span class="curr-name">{{ fromCurrency.name }}</span>
+            </div>
+            <app-icon-chevron class="chevron"></app-icon-chevron>
+            <select formControlName="fromCurrency" class="select-overlay" aria-label="Select source currency">
+              <option *ngFor="let c of currencies" [value]="c.code">
+                {{ c.code }} – {{ c.name }}
+              </option>
+            </select>
+          </div>
+          <div class="error-area"></div>
+        </div>
 
-  </p>
-</div>
+        <!-- Swap Button -->
+        <div class="swap-col">
+          <button type="button" class="swap-btn" aria-label="Swap currencies">
+            <app-icon-swap></app-icon-swap>
+          </button>
+        </div>
+
+        <!-- To Currency -->
+        <div class="form-field currency-field">
+          <label class="field-label">To</label>
+          <div class="currency-selector">
+            <span class="fi fi-{{ toCurrency.countryCode }} fis flag flag--sq" role="img"
+              [attr.aria-label]="toCurrency.name + ' flag'"></span>
+            <div class="curr-info">
+              <span class="curr-code">{{ toCurrency.code }}</span>
+              <span class="curr-name">{{ toCurrency.name }}</span>
+            </div>
+            <app-icon-chevron class="chevron"></app-icon-chevron>
+            <select formControlName="toCurrency" class="select-overlay" aria-label="Select target currency">
+              <option *ngFor="let c of currencies" [value]="c.code">{{ c.code }} – {{ c.name }}</option>
+            </select>
+          </div>
+          <div class="error-area"></div>
+        </div>
+
+      </div>
+
+      <!-- ── Convert Button ──────────────────────────────────────── -->
+      <button type="submit" class="convert-btn" [disabled]="exchangeForm.invalid">Convert</button>
+
+    </form>
+
+    <!-- ── Results Row ─────────────────────────────────────────────── -->
+    <div class="results-row">
+      <div class="rate-tag">
+        <app-icon-trend class="trend-icon"></app-icon-trend>
+        <span>1.00 EUR = 1.08 USD</span>
+      </div>
+
+      <div class="converted-block">
+        <span class="converted-amount">27.00 USD</span>
+        <span class="converted-label">Converted Amount</span>
+      </div>
+
+      <button type="button" class="more-details-btn">More Details</button>
+    </div>
+
+  </div>
+</section>

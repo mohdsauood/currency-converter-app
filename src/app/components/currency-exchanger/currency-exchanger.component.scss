@@ -2,42 +2,534 @@
 
 :host {
   display: block;
-
-
-
 }
 
 .currency-exchanger {
-  max-width: var(--content-max-width, 1280px); 
-  margin:    0 auto;
-  position: relative;
-  z-index: 900;
-  background-color: var(--bg-color, #fff);
-  border: 2px dashed #666;
-  padding: 1.25rem 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  max-width: var(--content-max-width, 1280px);
+  margin: 0 auto;
+  padding: 2rem 3rem;
 
   @include tablet {
     padding: 1rem 1.5rem;
   }
 
   @include mobile {
-    padding: 0.875rem 1rem;
-
-
-    
+    padding: 0.5rem 0.75rem;
   }
+}
 
-  .placeholder-title {
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 1.25rem;
+
+  @include tablet {
     font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-color);
+    margin-bottom: 0.875rem;
   }
 
-  .placeholder-hint {
+  @include mobile {
+    font-size: 1.125rem;
+    margin-bottom: 0.625rem;
+  }
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+
+.exchanger-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-md);
+
+  @include tablet {
+    padding: 1.25rem;
+    gap: 0.875rem;
+  }
+
+  @include mobile {
+    padding: 0.875rem 0.75rem;
+    gap: 0.625rem;
+    border-radius: 0.75rem;
+  }
+}
+
+// ── Form ─────────────────────────────────────────────────────────────────────
+
+.exchanger-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto 1fr;
+  gap: 1rem;
+  align-items: stretch;
+
+  @include tablet {
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.625rem;
+  }
+
+  @include mobile {
+    grid-template-columns: minmax(0, 0.65fr) minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0.375rem;
+  }
+}
+
+// ── Form Field Base ───────────────────────────────────────────────────────────
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.error-area {
+  min-height: 1.25rem;
+}
+
+.error-msg {
+  font-size: 0.75rem;
+  color: #ef4444;
+  display: block;
+}
+
+// ── Amount Field ──────────────────────────────────────────────────────────────
+
+.amount-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: var(--primary-btn);
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
+  }
+
+  &.is-invalid {
+    border-color: #ef4444;
+
+    &:focus-within {
+      box-shadow: 0 0 0 3px rgb(239 68 68 / 15%);
+    }
+  }
+}
+
+.amount-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.875rem 0.75rem 0.875rem 1rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-color);
+  font-family: var(--font-family);
+
+  @include tablet {
+    padding: 0.625rem 0.375rem 0.625rem 0.625rem;
+    font-size: 0.9375rem;
+  }
+
+  @include mobile {
+    padding: 0.5rem 0.25rem 0.5rem 0.375rem;
     font-size: 0.875rem;
-    color: var(--text-secondary, #666);
+  }
+
+  // hide number spinners
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  &[type='number'] {
+    appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+.amount-badge {
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-left: 1px solid var(--border-color);
+  white-space: nowrap;
+  user-select: none;
+
+  @include mobile {
+    padding: 0 0.375rem;
+    font-size: 0.7rem;
+  }
+}
+
+// ── Currency Selector ─────────────────────────────────────────────────────────
+
+.currency-selector {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background-color: var(--bg-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--primary-btn);
+  }
+
+  @include tablet {
+    gap: 0.375rem;
+    padding: 0.625rem;
+  }
+
+  @include mobile {
+    gap: 0.25rem;
+    padding: 0.5rem 0.375rem;
+  }
+}
+
+// ── Flag Icons ────────────────────────────────────────────────────────────────
+
+.flag--sq {
+  display: inline-block;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  @include tablet {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  @include mobile {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
+
+.curr-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.curr-code {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.2;
+
+  @include tablet {
+    font-size: 0.875rem;
+  }
+
+  @include mobile {
+    font-size: 0.75rem;
+  }
+}
+
+.curr-name {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @include tablet {
+    font-size: 0.6875rem;
+  }
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.chevron {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.select-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: none;
+}
+
+// ── Swap Button ───────────────────────────────────────────────────────────────
+
+.swap-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swap-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  transform: rotate(90deg);
+  border-radius: 50%;
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease;
+
+  app-icon-swap {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background-color: var(--primary-btn);
+    border-color: var(--primary-btn);
+    color: #fff;
+  }
+
+  @include tablet {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  @include mobile {
+    width: 1.75rem;
+    height: 1.75rem;
+
+    app-icon-swap {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+// ── Convert Button ────────────────────────────────────────────────────────────
+
+.convert-btn {
+  width: 100%;
+  padding: 0.9375rem;
+  border: none;
+  border-radius: 0.75rem;
+  background-color: var(--primary-btn);
+  color: var(--primary-btn-text);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+
+  &:hover:not([disabled]) {
+    background-color: var(--primary-btn-hover);
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @include tablet {
+    padding: 0.6875rem;
+    font-size: 0.9375rem;
+  }
+
+  @include mobile {
+    padding: 0.5625rem;
+    font-size: 0.875rem;
+    border-radius: 0.625rem;
+  }
+}
+
+// ── Results Row ───────────────────────────────────────────────────────────────
+
+.results-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+
+  @include tablet {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @include mobile {
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    align-items: center;
+  }
+}
+
+.rate-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  @include tablet {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+    order: 1;
+  }
+
+  @include mobile {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.6875rem;
+    gap: 0.25rem;
+    order: 1;
+
+    .trend-icon {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+.trend-icon {
+  width: 16px;
+  height: 16px;
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+.converted-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1rem 1.5rem;
+  background-color: var(--bg-color);
+  text-align: center;
+  min-height: 4rem;
+
+  @include tablet {
+    padding: 0.75rem 1rem;
+    min-height: 3.25rem;
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  @include mobile {
+    padding: 0.625rem 1rem;
+    min-height: 0;
+    flex-basis: 100%;
+    order: 3;
+  }
+}
+
+.converted-amount {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1.1;
+
+  @include tablet {
+    font-size: 1.5rem;
+  }
+
+  @include mobile {
+    font-size: 1rem;
+  }
+}
+
+.converted-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+
+  @include mobile {
+    font-size: 0.625rem;
+    margin-top: 0.125rem;
+  }
+}
+
+.more-details-btn {
+  background: transparent;
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.75rem;
+  color: var(--primary-btn);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-family);
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  @include tablet {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.8125rem;
+    order: 2;
+    margin-left: auto;
+  }
+
+  @include mobile {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.6875rem;
+    border-radius: 0.5rem;
+    order: 2;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background-color: var(--nav-btn-hover-bg);
+    border-color: var(--primary-btn);
   }
 }
