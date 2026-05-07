@@ -3,9 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { PopularCurrenciesComponent } from './pages/popular-currencies';
 
 const routes: Routes = [
-  { path: '', component: PopularCurrenciesComponent },
+  { path: '', component: PopularCurrenciesComponent, title: 'Popular Currencies' },
   {
     path: 'historical-rates',
+    title: 'Historical Rates',
     loadChildren: () =>
       import('./pages/currency-history').then(m => m.CurrencyHistoryModule)
   },

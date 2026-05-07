@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CurrencyHistoryComponent } from './currency-history.component';
 
 const routes: Routes = [
-  { path: '', component: CurrencyHistoryComponent }
+  { path: '', component: CurrencyHistoryComponent, title: 'Currency History' }
 ];
 
 @NgModule({
