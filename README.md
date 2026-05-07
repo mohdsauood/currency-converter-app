@@ -1,27 +1,70 @@
-# CurrencyConverterApp
+# Currency Converter App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.11.
+A modern Angular application for managing currency conversions with a clean, responsive UI built with reactive state, reusable components, and fast Jest-based testing.
 
-## Development server
+## Quick Start
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### Installation & Local Development
 
-## Code scaffolding
+```bash
+# Install dependencies
+npm install
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+# Start development server
+npm start
 
-## Build
+# Run linter
+npm run lint
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+# Run tests
+npm test
 
-## Running unit tests
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+The app will be available at `http://localhost:4200`
 
-## Running end-to-end tests
+## Notes
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- If the API fails with a rate-limit error such as `type: rate_limit_reached` and `info: You have exceeded the maximum rate limitation allowed on your subscription plan`, add your own new API key in `src/environments/environment.ts`, or set `useMockData: true` to use mock data and test the application locally.
 
-## Further help
+## Technical Highlights
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- Angular 13 with modular architecture
+- Reactive state management with RxJS
+- HttpClient-based API integration
+- SCSS for modular styling
+- Jest for unit testing
+- ESLint and Stylelint for code quality
+
+## Available Scripts
+
+- `npm start` - Start the Angular dev server
+- `npm run lint` - Run Angular ESLint
+- `npm test` - Run Jest unit tests
+
+## Project Structure
+
+```text
+src/
+├── app/
+│   ├── components/              # Reusable UI components
+│   │   ├── currency-exchanger/  # Main conversion form and results
+│   │   ├── historical-chart/    # Conversion history chart view
+│   │   ├── layout/              # App shell wrapper
+│   │   └── navbar/              # Top navigation and theme toggle
+│   ├── pages/                   # Feature pages
+│   │   └── currency-history/    # Historical rates page
+│   ├── services/                # Business logic and API access
+│   │   └── currency.service.ts  # Currency conversion service
+│   ├── helpers/                 # Shared helper utilities
+│   ├── models/                  # TypeScript interfaces and types
+│   ├── mock-data/               # Mock responses for testing and development
+│   ├── app.module.ts            # Root Angular module
+│   └── app-routing.module.ts    # Application routes
+├── assets/                      # Static assets
+├── environments/                # Environment-specific configuration
+├── styles/                      # Global theme and SCSS partials
+├── styles.scss                  # Global stylesheet entry point
+└── main.ts                      # Application bootstrap
+```
+
