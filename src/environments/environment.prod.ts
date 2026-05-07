@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiKey: 'a5a7e6e4bf023c369c53ca687b32ccf7',
+  apiKey: 'b16b72d273619dca1f24fa0666e91e45',
   useMockData: false,
 };
