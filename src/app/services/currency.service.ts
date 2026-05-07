@@ -1,13 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, forkJoin, of, timer } from 'rxjs';
-import { catchError, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, from, of, timer } from 'rxjs';
+import { catchError, concatMap, finalize, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { Currency, CurrencyCode, ConversionState, ChartDataPoint } from '../models/currency.model';
 import { SymbolsResponse, RatesResponse } from '../models/fixer-api.model';
 import { environment } from '../../environments/environment';
-import { MOCK_RATES_RESPONSE } from '../mock-data/mock-rates';
-import { MOCK_SYMBOLS_RESPONSE } from '../mock-data/mock-symbols';
-import { generateMockChartData } from '../mock-data/mock-historical-rates';
 import { mapSymbolsToCurrencies } from '../helpers/currency.helper';
 import { getLastTwelveMonthsData } from '../helpers/historical-data.helper';
 
@@ -21,12 +18,14 @@ export class CurrencyService implements OnDestroy {
     private symbolsSubject = new BehaviorSubject<Currency[]>([]);
     private ratesSubject = new BehaviorSubject<Record<CurrencyCode, number>>({} as Record<CurrencyCode, number>);
     private loadingSubject = new BehaviorSubject<boolean>(false);
+    private historyLoadingSubject = new BehaviorSubject<boolean>(false);
     private conversionStateSubject = new BehaviorSubject<ConversionState>({ amount: 1, fromCurrency: 'EUR' });
     private destroy$ = new Subject<void>();
 
     symbols$ = this.symbolsSubject.asObservable();
     rates$ = this.ratesSubject.asObservable();
     isLoading$ = this.loadingSubject.asObservable();
+    isHistoryLoading$ = this.historyLoadingSubject.asObservable();
     conversionState$ = this.conversionStateSubject.asObservable();
     // #endregion
 
@@ -87,46 +86,82 @@ export class CurrencyService implements OnDestroy {
 
     // #region Historical Chart
     getHistoricalChartData(from: CurrencyCode, to: CurrencyCode): Observable<ChartDataPoint[]> {
-        // added useMockData flag to avoid completing fixer api free limit
-        if (environment.useMockData) {
-            return of(generateMockChartData(from, to));
-        }
-        return this.fetchHistoricalData(from, to);
+        this.historyLoadingSubject.next(true);
+        return this.fetchHistoricalData(from, to).pipe(
+            finalize(() => this.historyLoadingSubject.next(false)),
+        );
     }
     // #endregion
 
     // #region HTTP
     private fetchData$() {
-        // added useMockData flag to avoid completing fixer api free limit
-        return environment.useMockData
-            ? of({ symbols: MOCK_SYMBOLS_RESPONSE as SymbolsResponse, latest: MOCK_RATES_RESPONSE as RatesResponse })
-            : forkJoin({
-                symbols: this.http.get<SymbolsResponse>(
-                    `${API_BASE}/symbols?access_key=${environment.apiKey}`
+        const requests = [
+            this.http.get<SymbolsResponse>(
+                `${API_BASE}/symbols?access_key=${environment.apiKey}`,
+            ),
+            this.http.get<RatesResponse>(
+                `${API_BASE}/latest?access_key=${environment.apiKey}`,
+            ),
+        ];
+
+        return from(requests).pipe(
+            concatMap(request =>
+                timer(1000).pipe(
+                    switchMap(() => request),
                 ),
-                latest: this.http.get<RatesResponse>(
-                    `${API_BASE}/latest?access_key=${environment.apiKey}`
-                ),
-            });
+            ),
+            toArray(),
+            map(([symbols, latest]) => ({
+                symbols: symbols as SymbolsResponse,
+                latest: latest as RatesResponse,
+            })),
+        );
     }
 
-    private fetchHistoricalData(from: CurrencyCode, to: CurrencyCode): Observable<ChartDataPoint[]> {
+    private fetchHistoricalData(
+        _from: CurrencyCode,
+        _to: CurrencyCode,
+    ): Observable<ChartDataPoint[]> {
+
         const { months, dates } = getLastTwelveMonthsData();
-        const requests = dates.map((date, i) =>
-            // add 500ms delay between requests to avoid hitting fixer api rate limits
-            timer(i * 500).pipe(
-                switchMap(() =>
-                    this.http.get<RatesResponse>(`${API_BASE}/${date}?access_key=${environment.apiKey}`).pipe(
-                        catchError(() => of({ success: false, timestamp: 0, base: 'EUR' as CurrencyCode, date, rates: {} as Record<CurrencyCode, number> })),
-                    )
+
+        const requests = dates.map(date =>
+            this.http.get<RatesResponse>(
+                `${API_BASE}/${date}?access_key=${environment.apiKey}`,
+            ).pipe(
+                catchError(() =>
+                    of({
+                        success: false,
+                        timestamp: 0,
+                        base: 'EUR' as CurrencyCode,
+                        date,
+                        rates: {} as Record<CurrencyCode, number>,
+                    }),
                 ),
-            )
+            ),
         );
-        return forkJoin(requests).pipe(
-            map(responses => responses.map((res, i) => {
-                const rates = res.rates ?? {} as Record<CurrencyCode, number>;
-                return { month: months[i], date: dates[i], rate: parseFloat(this.getRate(from, to, rates).toFixed(4)) };
-            })),
+
+        return from(requests).pipe(
+            concatMap(request =>
+                timer(1000).pipe(
+                    switchMap(() => request),
+                ),
+            ),
+            toArray(),
+            map(responses =>
+                responses.map((res, i) => {
+                    const rates =
+                        res.rates ?? {} as Record<CurrencyCode, number>;
+
+                    return {
+                        month: months[i],
+                        date: dates[i],
+                        rate: parseFloat(
+                            this.getRate(_from, _to, rates).toFixed(4),
+                        ),
+                    };
+                }),
+            ),
         );
     }
     // #endregion

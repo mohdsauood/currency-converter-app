@@ -74,7 +74,7 @@
       </div>
 
       <button type="submit" class="convert-btn"
-        [disabled]="exchangeForm.invalid || (isLoading$ | async)">Convert</button>
+        [disabled]="exchangeForm.invalid || (isLoading$ | async) || (isHistoryLoading$ | async)">Convert</button>
 
     </form>
 

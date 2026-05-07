@@ -26,8 +26,10 @@
     </label>
 
     <nav class="header-nav" aria-label="Currency pair navigation">
-      <button class="nav-btn" type="button" (click)="goToHistory('EUR', 'USD')">EUR-USD Details</button>
-      <button class="nav-btn" type="button" (click)="goToHistory('EUR', 'GBP')">EUR-GBP Details</button>
+      <button class="nav-btn" type="button" (click)="goToHistory('EUR', 'USD')"
+        [disabled]="(isHistoryLoading$ | async) ?? false">EUR-USD Details</button>
+      <button class="nav-btn" type="button" (click)="goToHistory('EUR', 'GBP')"
+        [disabled]="(isHistoryLoading$ | async) ?? false">EUR-GBP Details</button>
     </nav>
 
   </div>
