@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ThemeService } from '../../services';
+import { Router } from '@angular/router';
+import { CurrencyCode } from '../../models/currency.model';
+import { CurrencyService, ThemeService } from '../../services';
 
 @Component({
   selector: 'app-navbar',
@@ -8,5 +10,14 @@ import { ThemeService } from '../../services';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent {
-  constructor(public themeService: ThemeService) { }
+  constructor(
+    public themeService: ThemeService,
+    private currencyService: CurrencyService,
+    private router: Router,
+  ) { }
+
+  goToHistory(from: CurrencyCode, to: CurrencyCode): void {
+    this.currencyService.setConversionState(1, from, to);
+    this.router.navigate(['/historical-rates']);
+  }
 }

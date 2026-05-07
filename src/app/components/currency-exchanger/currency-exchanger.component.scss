@@ -318,17 +318,24 @@
   cursor: pointer;
   flex-shrink: 0;
   transition: background-color 0.2s ease, border-color 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease, opacity 0.2s ease;
 
   app-icon-swap {
     width: 18px;
     height: 18px;
   }
 
-  &:hover {
+  &:hover:not([disabled]) {
     background-color: var(--primary-btn);
     border-color: var(--primary-btn);
     color: #fff;
+  }
+
+  &[disabled],
+  &.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   @include tablet {
@@ -348,6 +355,12 @@
 }
 
 // ── Convert Button ────────────────────────────────────────────────────────────
+
+// Disabled From-currency field in history mode
+.currency-field.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
 
 .convert-btn {
   width: 100%;

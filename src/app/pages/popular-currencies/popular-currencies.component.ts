@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Currency, PopularCurrencyCard } from '../../models/currency';
+import { Currency, CurrencyCode, PopularCurrencyCard } from '../../models/currency.model';
 import { CurrencyService, ConversionState } from '../../services';
 
 const POPULAR_CURRENCIES = ['USD', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY', 'INR', 'SGD'];
@@ -66,7 +66,7 @@ export class PopularCurrenciesComponent implements OnInit, OnDestroy {
     const { amount, fromCurrency } = this.conversionState;
     this.cards = this.cards.map(card => ({
       ...card,
-      convertedAmount: this.currencyService.convert(amount, fromCurrency, card.code),
+      convertedAmount: this.currencyService.convert(amount, fromCurrency, card.code as CurrencyCode),
     }));
   }
 

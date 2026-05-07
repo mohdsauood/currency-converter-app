@@ -1,5 +1,5 @@
 <section class="currency-exchanger">
-  <h2 class="section-title">Currency Exchanger</h2>
+  <h2 class="section-title" *ngIf="!isHistoryPage">Currency Exchanger</h2>
 
   <div class="exchanger-card" [class.is-loading]="isLoading$ | async">
 
@@ -27,7 +27,7 @@
           </div>
         </div>
 
-        <div class="form-field currency-field">
+        <div class="form-field currency-field" [class.is-disabled]="isHistoryPage">
           <label class="field-label">From</label>
           <div class="currency-selector">
             <span class="fi fi-{{ fromCurrency.countryCode }} fis flag flag--sq" role="img"
@@ -36,8 +36,9 @@
               <span class="curr-code">{{ fromCurrency.code }}</span>
               <span class="curr-name">{{ fromCurrency.name }}</span>
             </div>
-            <app-icon-chevron class="chevron"></app-icon-chevron>
-            <select formControlName="fromCurrency" class="select-overlay" aria-label="Select source currency">
+            <app-icon-chevron class="chevron" *ngIf="!isHistoryPage"></app-icon-chevron>
+            <select formControlName="fromCurrency" class="select-overlay" aria-label="Select source currency"
+              [attr.disabled]="isHistoryPage ? '' : null">
               <option *ngFor="let c of currencies" [value]="c.code">
                 {{ c.code }} &ndash; {{ c.name }}
               </option>
@@ -47,7 +48,8 @@
         </div>
 
         <div class="swap-col">
-          <button type="button" class="swap-btn" aria-label="Swap currencies" (click)="swapCurrencies()">
+          <button type="button" class="swap-btn" aria-label="Swap currencies" (click)="swapCurrencies()"
+            [disabled]="isHistoryPage" [class.is-disabled]="isHistoryPage">
             <app-icon-swap></app-icon-swap>
           </button>
         </div>
@@ -87,7 +89,8 @@
         <span class="converted-label">Converted Amount</span>
       </div>
 
-      <button type="button" class="more-details-btn">More Details</button>
+      <button type="button" class="more-details-btn" *ngIf="!isHistoryPage" (click)="goToHistory()">More
+        Details</button>
     </div>
 
   </div>

@@ -1,7 +1,19 @@
-<section class="currency-history">
-  <h2 class="section-title">Currency History</h2>
+<div class="history-page">
 
-  <div class="history-table-placeholder">
-    Historical rates table will be implemented here.
+  <div class="page-header">
+    <h2 class="page-title">{{ fromCode }} – {{ fromCurrencyName }}</h2>
+    <a routerLink="/" class="home-link">
+      <svg class="home-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M3 9.5L10 3l7 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          stroke-linejoin="round" />
+        <path d="M5 8v7a1 1 0 001 1h3v-4h2v4h3a1 1 0 001-1V8" stroke="currentColor" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      Home
+    </a>
   </div>
-</section>
+
+  <app-historical-chart [data]="chartData" [fromCode]="fromCode" [toCode]="toCode" [isLoading]="isChartLoading">
+  </app-historical-chart>
+
+</div>

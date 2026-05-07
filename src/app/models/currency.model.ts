@@ -11,27 +11,13 @@ export interface Currency {
 export interface ConversionState {
     amount: number;
     fromCurrency: CurrencyCode;
+    toCurrency?: CurrencyCode;
 }
 
-export interface FixerError {
-    code: number;
-    type: string;
-    info: string;
-}
-
-export interface SymbolsResponse {
-    success: boolean;
-    symbols: Record<CurrencyCode, string>;
-    error?: FixerError;
-}
-
-export interface RatesResponse {
-    success: boolean;
-    timestamp: number;
-    base: CurrencyCode;
+export interface ChartDataPoint {
+    month: string;
     date: string;
-    rates: Record<CurrencyCode, number>;
-    error?: FixerError;
+    rate: number;
 }
 
 export interface PopularCurrencyCard extends Currency {
