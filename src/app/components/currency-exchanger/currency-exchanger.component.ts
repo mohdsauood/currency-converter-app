@@ -20,6 +20,7 @@ export class CurrencyExchangerComponent implements OnInit, OnDestroy {
   isHistoryPage = false;
 
   isLoading$ = this.currencyService.isLoading$;
+  isHistoryLoading$ = this.currencyService.isHistoryLoading$;
   currencies$ = this.currencyService.symbols$;
 
   private subscriptions: Subscription[] = [];

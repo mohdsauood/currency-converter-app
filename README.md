@@ -25,7 +25,12 @@ The app will be available at `http://localhost:4200`
 
 ## Notes
 
-- If the API fails with a rate-limit error such as `type: rate_limit_reached` and `info: You have exceeded the maximum rate limitation allowed on your subscription plan`, add your own new API key in `src/environments/environment.ts`, or set `useMockData: true` to use mock data and test the application locally.
+- If the API fails with a rate-limit error such as `type: rate_limit_reached` and `info: You have exceeded the maximum rate limitation allowed on your subscription plan`, add your own new API key in `src/environments/environment.ts`, or set `useMockData: true` to use mock data and test the application locally with mock data.
+
+## Branches
+
+- `main` — stable Angular 13 baseline
+- `feat/migrate-to-angular-15` — incremental migration from Angular 13 → 14 → 15, including typed reactive forms, route titles, and ESLint/TypeScript alignment for each version
 
 ## Technical Highlights
 

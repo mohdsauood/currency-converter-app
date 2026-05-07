@@ -10,6 +10,8 @@ import { CurrencyService, ThemeService } from '../../services';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NavbarComponent {
+  isHistoryLoading$ = this.currencyService.isHistoryLoading$;
+
   constructor(
     public themeService: ThemeService,
     private currencyService: CurrencyService,

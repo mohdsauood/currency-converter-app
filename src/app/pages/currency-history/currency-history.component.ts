@@ -15,24 +15,18 @@ export class CurrencyHistoryComponent implements OnInit, OnDestroy {
   toCode: CurrencyCode = 'USD';
   fromCurrencyName = 'Euro';
   chartData: ChartDataPoint[] = [];
-  isChartLoading = false;
 
   private chartTrigger$ = new Subject<{ from: CurrencyCode; to: CurrencyCode }>();
   private subscriptions: Subscription[] = [];
 
-  constructor(private currencyService: CurrencyService, private cdr: ChangeDetectorRef) { }
+  constructor(public currencyService: CurrencyService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.subscriptions.push(
       this.chartTrigger$.pipe(
-        switchMap(({ from, to }) => {
-          this.isChartLoading = true;
-          this.cdr.markForCheck();
-          return this.currencyService.getHistoricalChartData(from, to);
-        }),
+        switchMap(({ from, to }) => this.currencyService.getHistoricalChartData(from, to)),
         tap(data => {
           this.chartData = data;
-          this.isChartLoading = false;
           this.cdr.markForCheck();
         }),
       ).subscribe(),

@@ -13,7 +13,7 @@
     </a>
   </div>
 
-  <app-historical-chart [data]="chartData" [fromCode]="fromCode" [toCode]="toCode" [isLoading]="isChartLoading">
+  <app-historical-chart [data]="chartData" [fromCode]="fromCode" [toCode]="toCode" [isLoading]="(currencyService.isHistoryLoading$ | async) ?? false">
   </app-historical-chart>
 
 </div>
