@@ -1,10 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Currency, CurrencyCode } from '../../models/currency.model';
 import { CurrencyService } from '../../services';
+
+interface ExchangeForm {
+  amount: FormControl<number | null>;
+  fromCurrency: FormControl<CurrencyCode | null>;
+  toCurrency: FormControl<CurrencyCode | null>;
+}
 
 @Component({
   selector: 'app-currency-exchanger',
@@ -14,7 +20,7 @@ import { CurrencyService } from '../../services';
 })
 export class CurrencyExchangerComponent implements OnInit, OnDestroy {
 
-  exchangeForm!: FormGroup;
+  exchangeForm!: FormGroup<ExchangeForm>;
   currencies: Currency[] = [];
   convertedAmount: number | null = null;
   isHistoryPage = false;
@@ -52,8 +58,8 @@ export class CurrencyExchangerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.exchangeForm = this.fb.group({
       amount: [1, [Validators.required, Validators.min(0.01)]],
-      fromCurrency: ['EUR'],
-      toCurrency: ['USD'],
+      fromCurrency: ['EUR' as CurrencyCode],
+      toCurrency: ['USD' as CurrencyCode],
     });
 
     // Detect history route (initial + changes)
@@ -87,7 +93,7 @@ export class CurrencyExchangerComponent implements OnInit, OnDestroy {
 
     // Emit initial default state
     this.currencyService.setConversionState(
-      this.exchangeForm.value.amount,
+      this.exchangeForm.value.amount ?? 0,
       this.exchangeForm.value.fromCurrency as CurrencyCode,
       this.exchangeForm.value.toCurrency as CurrencyCode,
     );
@@ -99,8 +105,8 @@ export class CurrencyExchangerComponent implements OnInit, OnDestroy {
       return;
     }
     const { amount, fromCurrency, toCurrency } = this.exchangeForm.value;
-    this.convertedAmount = this.currencyService.convert(amount, fromCurrency as CurrencyCode, toCurrency as CurrencyCode);
-    this.currencyService.setConversionState(amount, fromCurrency as CurrencyCode, toCurrency as CurrencyCode);
+    this.convertedAmount = this.currencyService.convert(amount ?? 0, fromCurrency as CurrencyCode, toCurrency as CurrencyCode);
+    this.currencyService.setConversionState(amount ?? 0, fromCurrency as CurrencyCode, toCurrency as CurrencyCode);
   }
 
   swapCurrencies(): void {
@@ -112,7 +118,7 @@ export class CurrencyExchangerComponent implements OnInit, OnDestroy {
 
   goToHistory(): void {
     const { amount, fromCurrency, toCurrency } = this.exchangeForm.value;
-    this.currencyService.setConversionState(amount, fromCurrency as CurrencyCode, toCurrency as CurrencyCode);
+    this.currencyService.setConversionState(amount ?? 0, fromCurrency as CurrencyCode, toCurrency as CurrencyCode);
     this.router.navigate(['/historical-rates']);
   }
 
